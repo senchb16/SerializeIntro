@@ -5,11 +5,15 @@
  */
 package serializeintro;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import javax.swing.AbstractListModel;
+import java.io.FileReader;
+import java.time.LocalDate;
+import java.time.Month;
 
 /**
  *
@@ -39,6 +43,35 @@ public class SchuelerBL extends AbstractListModel {
             bw.write(s.getBirthday().toString());
             bw.newLine();
         }
+        bw.flush();
     }
+    
+    public void load(File f)throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(f));
+        String line;
+        while((line = br.readLine())!= null){
+            String[] parts = line.split(";");
+            try{
+                add(new Schueler(parts[0],LocalDate.parse(parts[1])));
+            }
+            catch(Exception ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+    
+    public static void main(String[] args) throws Exception {
+        Schueler s1 = new Schueler("Hans", LocalDate.of(12,12,2002));
+        Schueler s2 = new Schueler("Franz", LocalDate.of(12, Month.MARCH,2014));
+        SchuelerBL bl = new SchuelerBL();
+        File f = new File("./Data.csv");
+        
+        try{
+            bl.save(f);
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+        }
+    } 
     
 }
